@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="react.development.js" ></script>
+    <script src="react-dom.development.js" ></script>
+    <script src="babel.min.js"></script>
+
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        .Form {
+            display: flex;
+            flex-direction: column;
+            /* justify-content: center; */
+            margin: 0px auto;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        .Form input {
+            background-color: rgb(214, 223, 135);
+            padding: 10px;
+        }
+
+        .Form * {
+            margin: 5px 0px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+        class LoginScreen extends React.Component {
+
+            constructor(props) {
+                super(props); 
+                this.state = {
+                    username: "", 
+                    password: ""
+                }
+            }
+
+            render() {
+                return (
+                    <div className="Form">
+                        <h2>Login here</h2>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            placeholder="username"  
+                            value={this.state.username}
+                            onChange={this.handleChange}
+                        /> 
+                        
+                        <input 
+                            type="password" 
+                            name="password"
+                            placeholder="Password"
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                        />
+
+                        <button onClick={this.handleLogin} >Login</button>
+                        <p>If you don't already have account with us, register instead </p>
+                        <button onClick={() => {this.props.switchMode("RegisterScreen")}} >Register</button>
+
+                    </div>
+                )
+            }
+
+            handleChange = (event) => {
+                this.setState(state => ({
+                    [event.target.name]: event.target.value,
+                }));
+            }
+
+            handleLogin = () => {
+                console.log("logined successfully")
+                console.log(this.state.username)
+                console.log(this.state.password)
+                this.props.switchMode("ChatList")
+            }
+        }
+
+        class RegsiterScreen extends React.Component {
+
+            constructor(props) {
+                super(props); 
+                this.state = {
+                    username: "", 
+                    password: ""
+                }
+            }
+
+            render() {
+                return (
+                    <div className="Form">
+                        <h2>Register</h2>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            placeholder="username"  
+                            value={this.state.username}
+                            onChange={this.handleChange}
+                        /> 
+                        
+                        <input 
+                            type="password" 
+                            name="password"
+                            placeholder="Password"
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                        />
+
+                        <div>
+                            <input type="checkbox" required/> I'm not a robot
+                        </div>
+                        
+
+                        <button onClick={this.handleRegister} >Register</button>
+                        <p>If you already have account with us, Login instead </p>
+                        <button onClick={() => {this.props.switchMode("LoginScreen")}} >Login</button>
+
+                    </div>
+                )
+            }
+
+            handleChange = (event) => {
+                this.setState(state => ({
+                    [event.target.name]: event.target.value,
+                }));
+            }
+
+            handleRegister = () => {
+                console.log("New account created");
+                console.log(this.state.username)
+                console.log(this.state.password)
+            }
+        }
+
+        class ChatList extends React.Component {
+
+            constructor(props) {
+                super(props); 
+                this.state = {
+                    chats : [
+                        {username: "ali", userchats:[
+                            {0:"Hi"}, 
+                            {1: "Hi"}, 
+                            {0: "How are you"}, 
+                        ]}
+                    ] // [{username: ali, userchats: []}]
+                }
+            }
+
+            render() {
+                
+                return (
+                    <div>
+                        Here is ChatList    
+                    </div>
+                )
+            }
+        }
+
+        class ChatRoom extends React.Component {
+            render() {
+                return (
+                    <div>
+                        Here is ChatRoom    
+                    </div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+
+            constructor(props){
+                super(props);
+
+                this.state = {
+                    currentScreen: "LoginScreen", 
+                    isLogined: false,
+
+                }
+            }
+
+            render() {
+
+                switch(this.state.currentScreen) {
+                    case "LoginScreen": 
+                        return (
+                            <LoginScreen 
+                                switchMode={this.switchMode}
+                            />
+                        )
+                        break;
+                    case "RegisterScreen": 
+                        return (
+                            <RegsiterScreen 
+                                switchMode={this.switchMode}
+                            />
+                        )
+                        break;
+                    case "ChatList": 
+                        return (
+                            <ChatList 
+                                switchMode={this.switchMode}    
+                            />
+                        ) 
+                        break;
+                    case "ChatRoom": 
+                        return 
+                        <ChatRoom 
+                            switchMode={this.switchMode}    
+                        />
+                        break;
+                    default:
+                        return <LoginScreen />
+                        break;
+                }
+                
+            }
+
+            switchMode = (currentScreen) => {
+                this.setState(state => ({
+                    currentScreen
+                }));
+            }
+            
+
+        }
+         
+        ReactDOM.render(<App />, document.querySelector("#app"));
+
+        </script>
+</body>
+</html>

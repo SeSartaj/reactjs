@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="react.development.js" ></script>
+    <script src="react-dom.development.js" ></script>
+    <script src="babel.min.js"></script>
+
+    <style>
+    </style>
+
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+        class TodoApp extends React.Component {
+            constructor(props) {
+                super(props); 
+                this.state = {
+                    tasks: [], 
+                    userInput: "",
+                }
+            }
+
+            
+            componentDidMount(){
+
+                const tasks = localStorage.getItem("tasks");
+                if(tasks !== null) {
+                    // console.log(JSON.parse(tasks))
+                    this.setState({
+                        tasks: JSON.parse(tasks)
+                    })
+
+                }
+
+                window.addEventListener("beforeunload", () => {
+                    localStorage.setItem("tasks", JSON.stringify(this.state.tasks))
+                })
+            }
+
+            render() {
+
+                return (
+                    <div> 
+                        <h1>Tasks({this.state.tasks.length})</h1>
+                        <hr />
+                        <ul>
+                            {this.state.tasks.map((task, i) => 
+                                <li key={i}>
+                                    {task} 
+                                    <button data-index={i} onClick={this.deleteTask}>&#10003;</button>   
+                                </li>
+                            )}
+                        </ul>
+                        <input type="text" value={this.state.userInput} onChange={this.handleTaskInput} onKeyUp={this.handleInput} />
+                        <button onClick={this.addTask}>Add task</button>
+                    </div>
+                )
+            }
+
+            handleTaskInput = (event) => {
+
+                // console.log(event.target)
+                this.setState({
+                    userInput: event.target.value
+                })                
+            }
+
+            handleInput = (event) => {
+                if (event.key === "Enter") {
+                    this.addTask();
+                }
+            }
+
+            addTask = () => {
+                this.setState( state => ({
+                    tasks: [...state.tasks, state.userInput], 
+                    userInput: ""
+                }))
+
+                console.log("adding task...")
+            }
+
+            deleteTask = (event) => {
+                const index = event.target.dataset.index;
+                this.setState(state => {
+                    const tasks = [...state.tasks]
+                    tasks.splice(index, 1) // at index delete one elment
+                    return {
+                        tasks: tasks,
+                    }
+                })
+            }
+
+
+        }
+       
+        class App extends React.Component {
+
+            constructor(props){
+                super(props);
+            }
+
+            render() {
+                return (
+                    <TodoApp />
+                )
+            }
+
+            
+
+        }
+         
+        ReactDOM.render(<App />, document.querySelector("#app"));
+
+        </script>
+</body>
+</html>
